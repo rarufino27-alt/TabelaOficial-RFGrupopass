@@ -240,7 +240,6 @@ input::placeholder{color:#777}
     <div class="total" id="total">R$ 0,00</div>
   </div>
 
-  <button class="btn-primary" onclick="enviarWhats()">📲 Solicitar corrida no WhatsApp</button>
   <button class="btn-secondary" onclick="App.go('destino.html')">⬅ Voltar</button>
 
 </div>
@@ -369,23 +368,8 @@ document.querySelectorAll("select,input").forEach(el=>{
 
 calcular();
 
-function enviarWhats(){
-  const msg =
-`🚖 *RF Driver – Recibo de viagem*
-
-📌 *Origem*: ${origem}
-🏁 *Destino*: ${destino}
-
-*Detalhamento*
-${detalhesWhats.join("\n")}
-
-💰 *Total*: R$ ${App.get("total").toFixed(2)}
-
-Conforto, segurança e transparência.`;
-
-  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
-}
 </script>
 
 </body>
 </html>
+
