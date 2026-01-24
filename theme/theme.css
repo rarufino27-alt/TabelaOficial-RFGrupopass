@@ -1,0 +1,82 @@
+:root{
+  /* ===============================
+     FUNDO E ESTRUTURA
+     =============================== */
+  --bg:#0b0d11;              /* preto grafite profundo */
+  --bg-soft:#0f1116;
+
+  --card:#171a21;            /* cards escuros */
+  --card-soft:#1d2028;
+
+  --border:#2a2e38;
+
+  /* ===============================
+     TEXTO
+     =============================== */
+  --text:#eaeaf0;            /* texto principal */
+  --text-muted:#9aa0ac;      /* subtítulos / labels */
+
+  /* ===============================
+     IDENTIDADE RF DRIVER
+     =============================== */
+  --gold:#d4af37;            /* dourado premium */
+  --gold-dark:#b8962e;       /* dourado escuro */
+
+  --primary:var(--gold);     /* ação principal */
+
+  /* ===============================
+     STATUS
+     =============================== */
+  --success:#2ecc71;
+  --danger:#b33a3a;
+  --whatsapp:#1db954;
+
+  /* ===============================
+     PADRÕES
+     =============================== */
+  --radius:14px;
+}
+
+/* ===============================
+   RESET BÁSICO
+   =============================== */
+*{
+  box-sizing:border-box;
+  font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+/* ===============================
+   BODY
+   =============================== */
+body{
+  margin:0;
+  padding:16px;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top, rgba(212,175,55,.06), transparent 40%),
+    linear-gradient(180deg, var(--bg), var(--bg-soft));
+  color:var(--text);
+}
+
+/* ===============================
+   TIPOGRAFIA GLOBAL
+   =============================== */
+h1, h2, h3, h4{
+  margin:0 0 10px;
+  font-weight:700;
+  color:var(--text);
+}
+
+h1{
+  font-size:1.6rem;
+}
+
+h2{
+  font-size:1.3rem;
+}
+
+p{
+  margin:0 0 8px;
+  color:var(--text-muted);
+  font-size:14px;
+}
