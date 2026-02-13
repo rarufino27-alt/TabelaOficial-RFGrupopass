@@ -495,10 +495,14 @@ function enviarWhats(){
   const msg =
 `🚖 *Solicitação de Viagem RF Driver*
 
-📌 *Origem/Destino*: ${origem}
-🏁 *Destino/Origem*: ${destino}
+ *Origem ou Destino*
+${origem}
+
+ *Destino ou Origem*
+${destino}
 
 *Detalhamento*
+
 ${detalhesWhats.join("\n")}
 
 💰 *Total*: R$ ${App.get("total").toFixed(2)}
@@ -517,5 +521,6 @@ _Mobilidade com excelência_`;
 
 </body>
 </html>
+
 
 
