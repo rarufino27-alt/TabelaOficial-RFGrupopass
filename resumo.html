@@ -373,13 +373,6 @@ function calcular(){
   let detalhes = [];
   detalhesWhats = [];
 
-const observacao = observacaoInput.value.trim();
-
-if (observacao) {
-  detalhes.push([`Observação: ${observacao}`, 0]);
-  detalhesWhats.push(`📝 *Observação*: ${observacao}`);
-}
-
   detalhes.push(["Viagem base", valorBase]);
   detalhesWhats.push(`🚖 *Viagem base*: R$ ${valorBase.toFixed(2)}`);
 
@@ -515,6 +508,19 @@ document.querySelectorAll("select,input,textarea").forEach(el=>{
 calcular();
 
 function enviarWhats(){
+const observacao = observacaoInput.value.trim();
+
+let blocoObservacao = "";
+
+if (observacao) {
+  blocoObservacao = `
+_________________________________
+*_📝OBSERVAÇÃO DO PASSAGEIRO_*
+
+_${observacao}_
+`;
+}
+
   const msg =
 `*_Tem Algum 🚖 disponivel?_*
 
@@ -530,6 +536,8 @@ _________________________________
 _${detalhesWhats.join("\n")}_
 
 _💰 *Total*: R$ ${App.get("total").toFixed(2)}_
+
+_*${blocoObservacao}*_
 
 __________________________________
 *_SOLICITAÇÃO DE VIAGEM_*
