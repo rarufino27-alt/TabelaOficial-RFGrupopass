@@ -533,15 +533,15 @@ if (observacao) {
 _________________________________
 *_📝OBSERVAÇÃO DO PASSAGEIRO_*
 
-_${observacao}_
-`;
+_*${observacao}*_`;
 }
 
   const msg =
-`_*SOLICITAÇÃO DE VIAGEM 🚕*_
+`_*RF DRIVER*_
 ${blocoDataHora}
-
-*_📝Informações Gerais_*
+_________________________________
+*_Solicitação de Viagem 🚕_*
+_Detalhamento de taxas_
 
 ${detalhesWhats.join("\n")}
 
@@ -549,8 +549,7 @@ _💰 *Total*: R$ ${App.get("total").toFixed(2)}_
 
 ${blocoObservacao}
 __________________________________
-
-*_Itinerário da Viagem_*
+*_Itinerário da Viagem 🚕_*
 
  *_Origem ou Destino_*
 _👉${origem}_
@@ -567,6 +566,7 @@ _ALGUM MOTORISTA DISPONÍVEL?_`;
 
 </body>
 </html>
+
 
 
 
