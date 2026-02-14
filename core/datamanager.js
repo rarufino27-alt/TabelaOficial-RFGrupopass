@@ -49,13 +49,7 @@ const DataManager = {
       r => r.origem === origem && r.destino === destino
     );
 
-    // rota invertida (ida/volta)
-    if (!rota) {
-      rota = this.rotas.find(
-        r => r.origem === destino && r.destino === origem
-      );
-    }
-
     return rota ? rota.valor : null;
   }
 };
+
