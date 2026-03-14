@@ -496,41 +496,59 @@ e.addEventListener("change",calcular);
 function solicitar(){
 
 const agora = new Date();
+const horaAtual = agora.getHours();
 
-const data = agora.toLocaleDateString("pt-BR");
-const hora = agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+/* SAUDAÇÃO */
+
+let saudacao = "Olá";
+
+if(horaAtual >= 5 && horaAtual < 12){
+saudacao = "Bom dia";
+}
+
+if(horaAtual >= 12 && horaAtual < 18){
+saudacao = "Boa tarde";
+}
+
+if(horaAtual >= 18){
+saudacao = "Boa noite";
+}
+
+/* DADOS */
 
 const pagamento = document.getElementById("pagamento").value;
-
 const total = parseFloat(localStorage.getItem("rf_total_final")) || 0;
 
-let categoriaTexto = "Carro de 4 Lugares";
+let categoriaTexto = "Carro de 4 lugares";
 
 if(categoria > 1){
-categoriaTexto = "Carro de 6 Lugares";
+categoriaTexto = "Carro de 6 lugares";
 }
+
+/* ITINERÁRIO */
+
+let destinoFinal = destino;
+
+if(parada){
+destinoFinal = parada + " X " + destino;
+}
+
+let itinerario = `${origem}  X  ${destinoFinal}`;
+
+/* TAXAS */
+
+let detalhes = "";
 
 let base = parseFloat(valor) || 0;
 let taxas = 0;
-
-let detalhes = `Valor Base: R$ ${base.toFixed(2)}\n`;
 
 /* NOTURNO */
 
 const noturno = adicionalNoturno(base);
 
 if(noturno > 0){
-detalhes += `Adicional Noturno: R$ ${noturno.toFixed(2)}\n`;
+detalhes += `Noturno: R$ ${noturno.toFixed(2)}\n`;
 base += noturno;
-}
-
-/* SAÍDA PRAIA */
-
-const saidaPraia = parseFloat(document.getElementById("saidaPraia").value)||0;
-
-if(saidaPraia > 0){
-detalhes += `Saída de Praia: R$ ${saidaPraia.toFixed(2)}\n`;
-taxas += saidaPraia;
 }
 
 /* FEIRA */
@@ -538,7 +556,7 @@ taxas += saidaPraia;
 const feira = parseFloat(document.getElementById("feira").value)||0;
 
 if(feira > 0){
-detalhes += `Taxa de Feira: R$ ${feira.toFixed(2)}\n`;
+detalhes += `Feira: R$ ${feira.toFixed(2)}\n`;
 taxas += feira;
 }
 
@@ -547,8 +565,17 @@ taxas += feira;
 const animal = parseFloat(document.getElementById("animal").value)||0;
 
 if(animal > 0){
-detalhes += `Transporte Animal: R$ ${animal.toFixed(2)}\n`;
+detalhes += `Animal: R$ ${animal.toFixed(2)}\n`;
 taxas += animal;
+}
+
+/* SAÍDA PRAIA */
+
+const saidaPraia = parseFloat(document.getElementById("saidaPraia").value)||0;
+
+if(saidaPraia > 0){
+detalhes += `Saída Praia: R$ ${saidaPraia.toFixed(2)}\n`;
+taxas += saidaPraia;
 }
 
 /* ESPERA */
@@ -559,31 +586,21 @@ if(espera > 5){
 
 const taxaEspera = 3 + ((espera-5)*0.60);
 
-detalhes += `Tempo de Espera: R$ ${taxaEspera.toFixed(2)}\n`;
+detalhes += `Espera: R$ ${taxaEspera.toFixed(2)}\n`;
 
 taxas += taxaEspera;
-
-}
-
-/* SUBTOTAL */
-
-let subtotal = base + taxas;
-
-/* CATEGORIA */
-
-if(categoria > 1){
-
-const acrescimo = subtotal * (categoria-1);
-
-detalhes += `Acréscimo 6 Lugares: R$ ${acrescimo.toFixed(2)}\n`;
-
-subtotal = subtotal * categoria;
 
 }
 
 /* FORMA PAGAMENTO */
 
 let pagamentoTexto = "";
+
+let subtotal = base + taxas;
+
+if(categoria > 1){
+subtotal = subtotal * categoria;
+}
 
 if(pagamento === "dinheiro"){
 pagamentoTexto = "Dinheiro";
@@ -594,50 +611,42 @@ pagamentoTexto = "Pix";
 }
 
 if(pagamento === "debito"){
-pagamentoTexto = "Cartão Débito";
+
+const acrescimo = total - subtotal;
+
+pagamentoTexto = `Cartão Débito (+R$ ${acrescimo.toFixed(2)})`;
+
 }
 
 if(pagamento === "credito"){
-pagamentoTexto = "Cartão Crédito";
+
+const acrescimo = total - subtotal;
+
+pagamentoTexto = `Cartão Crédito (+R$ ${acrescimo.toFixed(2)})`;
+
 }
 
-/* ITINERÁRIO */
-
-let itinerario = `📍 Origem
-${origem}
-
-`;
-
-if(parada){
-itinerario += `🛑 Parada
-${parada}
-
-`;
+if(pagamentoTexto){
+detalhes += `Pagamento: ${pagamentoTexto}\n`;
 }
-
-itinerario += `🏁 Destino
- ${destino}`;
 
 /* MENSAGEM */
 
 const msg =
-`*Alguém Disponível?*
-${categoriaTexto}
+`${saudacao}!
+
+Alguém disponível?
 
 ${itinerario}
 
-____________________
-*Detalhamento*
+${categoriaTexto}?
 
+Tarifa tabelada: R$ ${total.toFixed(2)}
+
+Detalhamento:
 ${detalhes}
-Forma de Pagamento: ${pagamentoTexto}
 
-*Preço da Tabela: R$ ${total.toFixed(2)}*
-____________________
-${data}
-${hora}
-
-*GRUPO RF*
+Grupo RF
 58.615.336/0001-49`;
 
 const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
