@@ -504,10 +504,10 @@ const total = parseFloat(localStorage.getItem("rf_total_final")) || 0;
 
 const pagamento = document.getElementById("pagamento").value;
 
-let categoriaTexto = "Driver 4 Lugares";
+let categoriaTexto = "Carro de 4 Lugares";
 
 if(categoria > 1){
-categoriaTexto = "Driver 6 Lugares";
+categoriaTexto = "Carro de 6 Lugares";
 }
 
 let base = parseFloat(valor) || 0;
@@ -578,12 +578,13 @@ const msg =
 ${data}
 ${hora}
 
-_____________________________
-ALGUÉM COM UM ${categoriaTexto}
-DISPONIVEL PARA ${itinerario}?
+ALGUÉM DISPONÍVEL COM UM ${categoriaTexto}?
 
+${itinerario}
+
+AGUARDO RETORNO
 _____________________________
-💰 *Total: R$ ${total.toFixed(2)}*
+*Preço da Tabela: R$ ${total.toFixed(2)}*
 
 _GRUPO RF_
 58.615.336/0001-49`;
