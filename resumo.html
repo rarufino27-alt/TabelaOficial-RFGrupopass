@@ -574,18 +574,18 @@ itinerario += `🏁 Destino:
 ${destino}`;
 
 const msg =
-`*SOLICITAÇÃO DE VIAGEM RF*
-${data}
-${hora}
-
-ALGUÉM DISPONÍVEL COM UM ${categoriaTexto}?
+`*Alguém Disponível?*
+  ${categoriaTexto}
 
 ${itinerario}
 
+R$ ${taxaCartao.toFixed(2)}
 AGUARDO RETORNO
-_____________________________
-*Preço da Tabela: R$ ${total.toFixed(2)}*
 
+*Preço da Tabela: R$ ${total.toFixed(2)}*
+_____________________________
+${data}
+${hora}
 _GRUPO RF_
 58.615.336/0001-49`;
 
