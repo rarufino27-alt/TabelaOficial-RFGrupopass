@@ -20,8 +20,6 @@ color:#fff;
 min-height:100vh;
 }
 
-/* HEADER */
-
 .top-white{
 background:#fff;
 padding:20px 20px 28px 20px;
@@ -56,8 +54,6 @@ font-size:24px;
 cursor:pointer;
 color:#000;
 }
-
-/* MENU */
 
 .menu-overlay{
 position:fixed;
@@ -98,15 +94,11 @@ cursor:pointer;
 color:#facc15;
 }
 
-/* CONTAINER */
-
 .container{
 padding:30px 25px 140px;
 max-width:450px;
 margin:auto;
 }
-
-/* CARD */
 
 .card{
 background:#1c1c1c;
@@ -175,8 +167,6 @@ background:#ff3b30;
 margin-top:8px;
 }
 
-/* FOOTER */
-
 .footer{
 position:fixed;
 bottom:0;
@@ -224,14 +214,11 @@ cursor:pointer;
 </div>
 
 <div class="top-white">
-
 <div class="logo-area">
 <img src="icons/icon-192.png" class="logo-img">
-<span class="logo-text-dark">PASSAGEIRO RF</span>
+<span class="logo-text-dark">MOTORISTA GRUPO RF</span>
 </div>
-
 <div class="menu-btn-dark" onclick="abrirMenu()">☰</div>
-
 </div>
 
 <div class="container">
@@ -239,6 +226,11 @@ cursor:pointer;
 <div class="card">
 <h3>Rota</h3>
 <div id="rota"></div>
+</div>
+
+<div class="card">
+<h3>Observação ao motorista</h3>
+<textarea id="obs"></textarea>
 </div>
 
 <div class="card">
@@ -271,24 +263,18 @@ cursor:pointer;
 </div>
 
 <div class="card">
-<h3>Saída de Praia</h3>
+<h3>Tempo de espera embarque (min)</h3>
+<input type="number" id="espera" class="select" value="0">
+</div>
 
+<div class="card">
+<h3>Saída de Praia</h3>
 <select id="saidaPraia" class="select">
 <option value="0">Não</option>
 <option value="10">Sim (+ R$ 10,00)</option>
 </select>
-
-<p style="font-size:12px;opacity:.7;margin-top:8px">
-Taxa válida para saídas de praia aos sábados, domingos e feriados.
-</p>
-
 </div>
 
-  <div class="card">
-<h3>Observação ao motorista</h3>
-<textarea id="obs"></textarea>
-</div>
-  
 <div class="card">
 <h3>Detalhamento</h3>
 <div id="detalhe"></div>
@@ -297,15 +283,12 @@ Taxa válida para saídas de praia aos sábados, domingos e feriados.
 </div>
 
 <div class="footer">
-
 <div class="footer-inner">
-
 <div class="valor" id="valorFinal">R$ 0,00</div>
-
-<button onclick="confirmar()">Solicitar viagem no Grupo</button>
-
+<div class="cta-area">
+<button onclick="solicitar()">Enviar recibo via Whatsapp</button>
 </div>
-
+</div>
 </div>
 
 <script>
@@ -328,6 +311,8 @@ const corrida = JSON.parse(localStorage.getItem("rf_corrida_temp"));
 if(!corrida) window.location.href="home.html";
 
 let { origem, parada, destino, valor, categoria = 1 } = corrida;
+
+let detalhamentoRecibo = "";
 
 function montarRota(){
 
@@ -364,11 +349,13 @@ return 0;
 
 function calcular(){
 
-let base=parseFloat(valor);
+let base=parseFloat(valor)||0;
 let taxas=0;
 let detalhe="";
+let recibo="";
 
 detalhe+=`<div class="linha"><span>Rota</span><span>R$ ${base.toFixed(2)}</span></div>`;
+recibo+=`Valor base: R$ ${base.toFixed(2)}\n`;
 
 const noturno=adicionalNoturno(base);
 
@@ -377,38 +364,45 @@ if(noturno>0){
 detalhe+=`<div class="linha"><span>Adicional Noturno</span><span>R$ ${noturno.toFixed(2)}</span></div>
 <div class="badge">Tarifa Noturna</div>`;
 
+recibo+=`Adicional Noturno: R$ ${noturno.toFixed(2)}\n`;
+
 base+=noturno;
 
 }
 
-const saidaPraia=parseFloat(document.getElementById("saidaPraia").value);
+const saidaPraia=parseFloat(document.getElementById("saidaPraia").value)||0;
 
 if(saidaPraia>0){
 detalhe+=`<div class="linha"><span>Saída de Praia</span><span>R$ ${saidaPraia.toFixed(2)}</span></div>`;
+recibo+=`Saída de Praia: R$ ${saidaPraia.toFixed(2)}\n`;
 taxas+=saidaPraia;
 }
 
-const feira=parseFloat(document.getElementById("feira").value);
+const feira=parseFloat(document.getElementById("feira").value)||0;
 
 if(feira>0){
 detalhe+=`<div class="linha"><span>Feira</span><span>R$ ${feira.toFixed(2)}</span></div>`;
+recibo+=`Taxa de Feira: R$ ${feira.toFixed(2)}\n`;
 taxas+=feira;
 }
 
-const animal=parseFloat(document.getElementById("animal").value);
+const animal=parseFloat(document.getElementById("animal").value)||0;
 
 if(animal>0){
 detalhe+=`<div class="linha"><span>Animal</span><span>R$ ${animal.toFixed(2)}</span></div>`;
+recibo+=`Transporte Animal: R$ ${animal.toFixed(2)}\n`;
 taxas+=animal;
 }
 
-const espera=parseFloat(document.getElementById("espera").value);
+const espera=parseFloat(document.getElementById("espera").value)||0;
 
 if(espera>5){
 
 const taxaEspera=3 + ((espera-5)*0.60);
 
 detalhe+=`<div class="linha"><span>Espera</span><span>R$ ${taxaEspera.toFixed(2)}</span></div>`;
+recibo+=`Tempo de Espera: R$ ${taxaEspera.toFixed(2)}\n`;
+
 taxas+=taxaEspera;
 
 }
@@ -420,6 +414,8 @@ if(categoria>1){
 const acrescimo=subtotal*(categoria-1);
 
 detalhe+=`<div class="linha"><span>Categoria 6 lugares</span><span>R$ ${acrescimo.toFixed(2)}</span></div>`;
+
+recibo+=`Acréscimo 6 lugares: R$ ${acrescimo.toFixed(2)}\n`;
 
 subtotal=subtotal*categoria;
 
@@ -445,6 +441,8 @@ detalhe+=`<div class="total">Total: R$ ${total.toFixed(2)}</div>`;
 document.getElementById("detalhe").innerHTML=detalhe;
 document.getElementById("valorFinal").innerText="R$ "+total.toFixed(2);
 
+detalhamentoRecibo = recibo;
+
 localStorage.setItem("rf_total_final",total.toFixed(2));
 
 }
@@ -453,17 +451,134 @@ document.querySelectorAll("select,input").forEach(e=>{
 e.addEventListener("change",calcular);
 });
 
-function confirmar(){
+function solicitar(){
 
-const final={
-...corrida,
-total:localStorage.getItem("rf_total_final"),
-observacao:document.getElementById("obs").value
-};
+const agora = new Date();
 
-localStorage.setItem("rf_corrida_confirmada",JSON.stringify(final));
+const data = agora.toLocaleDateString("pt-BR");
+const hora = agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 
-window.location.href="procurando.html";
+const total = parseFloat(localStorage.getItem("rf_total_final")) || 0;
+
+const pagamento = document.getElementById("pagamento").value;
+
+let categoriaTexto = "Driver 4 Lugares";
+
+if(categoria > 1){
+categoriaTexto = "Driver 6 Lugares";
+}
+
+/* CALCULO DO SUBTOTAL */
+
+let base = parseFloat(valor) || 0;
+let taxas = 0;
+
+/* PRAIA */
+const saidaPraia = parseFloat(document.getElementById("saidaPraia").value)||0;
+taxas += saidaPraia;
+
+/* FEIRA */
+const feira = parseFloat(document.getElementById("feira").value)||0;
+taxas += feira;
+
+/* ANIMAL */
+const animal = parseFloat(document.getElementById("animal").value)||0;
+taxas += animal;
+
+/* ESPERA */
+const espera = parseFloat(document.getElementById("espera").value)||0;
+
+if(espera > 5){
+taxas += 3 + ((espera-5)*0.60);
+}
+
+/* NOTURNO */
+
+const noturno = adicionalNoturno(base);
+base += noturno;
+
+/* SUBTOTAL */
+
+let subtotal = base + taxas;
+
+if(categoria > 1){
+subtotal = subtotal * categoria;
+}
+
+/* CALCULO TAXA CARTÃO */
+
+let taxaCartao = 0;
+let blocoPagamento = "";
+
+if(pagamento === "debito"){
+taxaCartao = total - subtotal;
+
+blocoPagamento = `
+Acréscimo cartão: R$ ${taxaCartao.toFixed(2)}
+Forma de pagamento: Débito
+`;
+}
+
+if(pagamento === "credito"){
+taxaCartao = total - subtotal;
+
+blocoPagamento = `
+Acréscimo cartão: R$ ${taxaCartao.toFixed(2)}
+Forma de pagamento: Crédito
+`;
+}
+
+/* ITINERÁRIO */
+
+let itinerario = `📍 Origem:
+${origem}
+
+`;
+
+if(parada){
+itinerario += `🛑 Parada:
+${parada}
+
+`;
+}
+
+itinerario += `🏁 Destino:
+${destino}`;
+
+/* MENSAGEM */
+
+const msg =
+`*RECIBO DE VIAGEM RF*
+${data}
+${hora}
+
+_____________________________
+*Detalhamento da viagem*
+
+Categoria: ${categoriaTexto}
+
+${detalhamentoRecibo}
+
+Subtotal: R$ ${subtotal.toFixed(2)}
+
+${blocoPagamento}
+
+Total Geral: R$ ${total.toFixed(2)}
+
+_____________________________
+*ITINERÁRIO*
+
+${itinerario}
+
+_____________________________
+💰 *Total: R$ ${total.toFixed(2)}*
+
+_GRUPO RF_
+58.615.336/0001-49`;
+
+const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+window.location.href = url;
 
 }
 
