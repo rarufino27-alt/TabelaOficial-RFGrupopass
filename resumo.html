@@ -603,20 +603,20 @@ pagamentoTexto = "Cartão Crédito";
 
 /* ITINERÁRIO */
 
-let itinerario = `📍 Origem:
+let itinerario = `📍 Origem
 ${origem}
 
 `;
 
 if(parada){
-itinerario += `🛑 Parada:
+itinerario += `🛑 Parada
 ${parada}
 
 `;
 }
 
-itinerario += `🏁 Destino:
-${destino}`;
+itinerario += `🏁 Destino
+ ${destino}`;
 
 /* MENSAGEM */
 
@@ -630,11 +630,9 @@ ____________________
 *Detalhamento*
 
 ${detalhes}
-
 Forma de Pagamento: ${pagamentoTexto}
 
 *Preço da Tabela: R$ ${total.toFixed(2)}*
-
 ____________________
 ${data}
 ${hora}
