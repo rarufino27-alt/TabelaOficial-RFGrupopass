@@ -8,6 +8,7 @@
 <script src="core/datamanager.js"></script>
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -16,14 +17,16 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 
 body{
-background:linear-gradient(to bottom,#0f0f0f,#1a1a1a);
-color:#ffffff;
+background:radial-gradient(circle at top,#1f1f1f 0%,#0a0a0a 55%,#000 100%);
+color:#fff;
 height:100vh;
 overflow:hidden;
 }
 
+/* HEADER */
+
 .top-white{
-background:#ffffff;
+background:#fff;
 padding:20px 20px 28px 20px;
 display:flex;
 justify-content:space-between;
@@ -57,6 +60,8 @@ cursor:pointer;
 color:#000;
 }
 
+/* MENU LATERAL */
+
 .menu-overlay{
 position:fixed;
 inset:0;
@@ -83,7 +88,7 @@ left:0;
 
 .menu h3{
 margin-bottom:20px;
-color:#facc15;
+color:#ffd700;
 }
 
 .menu-item{
@@ -93,12 +98,58 @@ cursor:pointer;
 }
 
 .menu-item:hover{
-color:#facc15;
+color:#ffd700;
 }
+
+/* SLIDER */
+
+.slider{
+width:90%;
+max-width:420px;
+margin:20px auto;
+overflow:hidden;
+border-radius:18px;
+border:1px solid rgba(255,215,0,0.2);
+box-shadow:0 10px 25px rgba(0,0,0,.6);
+}
+
+.slides{
+display:flex;
+transition:transform .6s ease;
+}
+
+.slide{
+min-width:100%;
+height:110px;
+background-size:cover;
+background-position:center;
+}
+
+/* INDICADORES */
+
+.indicadores{
+display:flex;
+justify-content:center;
+gap:6px;
+margin-top:6px;
+}
+
+.dotSlide{
+width:6px;
+height:6px;
+border-radius:50%;
+background:#555;
+}
+
+.dotSlide.ativo{
+background:#ffd700;
+}
+
+/* CENTRO */
 
 .center{
 position:absolute;
-top:52%;
+top:55%;
 left:50%;
 transform:translate(-50%,-50%);
 width:90%;
@@ -110,16 +161,31 @@ text-align:center;
 font-weight:700;
 font-size:1.3rem;
 margin-bottom:30px;
-color:#ffffff;
 }
 
+/* CARD */
+
 .card{
-background:#1c1c1c;
-border-radius:20px;
-padding:20px;
-box-shadow:0 15px 35px rgba(0,0,0,.5);
-border:1px solid rgba(255,255,255,.05);
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(16px);
+border-radius:22px;
+padding:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.8);
+border:1px solid rgba(255,215,0,0.12);
+position:relative;
 }
+
+.card::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:60px;
+height:3px;
+background:linear-gradient(90deg,#ffd700,#ffb800);
+}
+
+/* CAMPOS */
 
 .campo{
 display:flex;
@@ -128,18 +194,17 @@ justify-content:space-between;
 padding:16px 0;
 border-bottom:1px solid rgba(255,255,255,.08);
 cursor:pointer;
+transition:.2s;
 }
 
-.campo:last-child{
-border-bottom:none;
+.campo:hover{
+transform:translateX(4px);
 }
 
 .campo-left{
 display:flex;
 align-items:center;
 gap:12px;
-color:#ffffff;
-font-weight:500;
 }
 
 .dot{
@@ -149,13 +214,15 @@ border-radius:50%;
 }
 
 .origem{background:#22c55e;}
-.parada{background:#facc15;}
+.parada{background:#ffd700;}
 .destino{background:#ef4444;}
 
 .plus{
 font-size:20px;
-color:#facc15;
+color:#ffd700;
 }
+
+/* SELECT */
 
 .select{
 background:#111;
@@ -164,6 +231,8 @@ border-radius:10px;
 padding:6px;
 border:1px solid rgba(255,255,255,.1);
 }
+
+/* BOTÃO */
 
 .bottom{
 position:absolute;
@@ -177,10 +246,9 @@ width:100%;
 padding:18px;
 border:none;
 border-radius:35px;
-background:#facc15;
+background:linear-gradient(135deg,#ffd700,#ffb800);
 color:#000;
-font-weight:800;
-font-size:1rem;
+font-weight:900;
 cursor:pointer;
 }
 
@@ -189,10 +257,12 @@ background:#333;
 color:#777;
 }
 
+/* MODAL */
+
 .modal{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.8);
+background:rgba(0,0,0,.85);
 display:none;
 align-items:center;
 justify-content:center;
@@ -236,10 +306,123 @@ cursor:pointer;
 .lista div:hover{
 background:#2a2a2a;
 }
+
+/* RF SELECT */
+
+.rf-select{
+background:#111;
+border:1px solid rgba(255,255,255,.1);
+border-radius:12px;
+padding:10px 14px;
+cursor:pointer;
+min-width:120px;
+text-align:right;
+}
+
+/* MODAL SELECT */
+
+.rf-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:300;
+}
+
+.rf-modal-content{
+background:#1c1c1c;
+border-radius:18px;
+width:90%;
+max-width:340px;
+overflow:hidden;
+}
+
+.rf-option{
+padding:16px;
+border-bottom:1px solid rgba(255,255,255,.08);
+cursor:pointer;
+text-align:center;
+}
+
+.rf-option:hover{
+background:#2a2a2a;
+}
+
+/* RADAR FUNDO */
+
+.radar-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+opacity:0.05;
+z-index:-1;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.radar-circle{
+position:absolute;
+border:1px solid rgba(255,215,0,0.25);
+border-radius:50%;
+animation:radarPulse 6s infinite;
+}
+
+.radar-circle:nth-child(1){
+width:120px;
+height:120px;
+}
+
+.radar-circle:nth-child(2){
+width:260px;
+height:260px;
+}
+
+.radar-circle:nth-child(3){
+width:420px;
+height:420px;
+}
+
+.radar-circle:nth-child(4){
+width:600px;
+height:600px;
+}
+
+/* varredura */
+
+.radar-line{
+position:absolute;
+width:300px;
+height:2px;
+background:linear-gradient(90deg,transparent,#ffd700);
+transform-origin:left center;
+animation:radarSweep 10s linear infinite;
+}
+
+/* animações */
+
+@keyframes radarSweep{
+0%{ transform:rotate(0deg); }
+100%{ transform:rotate(360deg); }
+}
+
+@keyframes radarPulse{
+0%{opacity:0.2;}
+50%{opacity:0.6;}
+100%{opacity:0.2;}
+}
+
 </style>
 </head>
 
 <body>
+
+<!-- MENU LATERAL -->
 
 <div class="menu-overlay" id="menuOverlay" onclick="fecharMenu()"></div>
 
@@ -248,6 +431,8 @@ background:#2a2a2a;
 <div class="menu-item" onclick="irPara('termos.html')">Regras do Grupo RF</div>
 <div class="menu-item" onclick="irPara('configuracoes.html')">Configurações</div>
 </div>
+
+<!-- HEADER -->
 
 <div class="top-white">
 
@@ -258,6 +443,28 @@ background:#2a2a2a;
 
 <div class="menu-btn-dark" onclick="abrirMenu()">☰</div>
 
+</div>
+
+<!-- SLIDER -->
+
+<div class="slider">
+<div class="slides" id="slides">
+
+<div class="slide" style="background-image:url('slides/slide1.jpg')"></div>
+<div class="slide" style="background-image:url('slides/slide2.jpg')"></div>
+<div class="slide" style="background-image:url('slides/slide3.jpg')"></div>
+<div class="slide" style="background-image:url('slides/slide4.jpg')"></div>
+<div class="slide" style="background-image:url('slides/slide5.jpg')"></div>
+
+</div>
+</div>
+
+<div class="indicadores">
+<div class="dotSlide ativo"></div>
+<div class="dotSlide"></div>
+<div class="dotSlide"></div>
+<div class="dotSlide"></div>
+<div class="dotSlide"></div>
 </div>
 
 <div class="center">
@@ -290,8 +497,6 @@ Para onde vamos hoje?
 <div class="plus" id="addParada">＋</div>
 </div>
 
-<!-- TIPO DE VEÍCULO -->
-
 <div class="campo">
 
 <div class="campo-left">
@@ -299,10 +504,11 @@ Para onde vamos hoje?
 <div>Tipo de veículo</div>
 </div>
 
-<select id="tipoCarro" class="select">
-<option value="1">4 lugares</option>
-<option value="1.5">6 lugares (+50%)</option>
-</select>
+<div class="rf-select" id="tipoCarroBtn">
+<span id="tipoCarroTexto">4 lugares</span>
+</div>
+
+<input type="hidden" id="tipoCarro" value="1">
 
 </div>
 
@@ -315,26 +521,58 @@ Para onde vamos hoje?
 </div>
 
 <div class="modal" id="modal">
-
 <div class="modal-content">
-
 <input type="text" id="busca" placeholder="Buscar local...">
-
 <div class="lista" id="lista"></div>
+</div>
+</div>
 
+  <div class="rf-modal" id="modalTipoCarro">
+
+<div class="rf-modal-content">
+
+<div class="rf-option" data-value="1">
+4 lugares
+</div>
+
+<div class="rf-option" data-value="1.5">
+6 lugares (+50%)
 </div>
 
 </div>
 
+</div>
+  
+<div class="radar-bg">
+
+<div class="radar-circle"></div>
+<div class="radar-circle"></div>
+<div class="radar-circle"></div>
+<div class="radar-circle"></div>
+
+<div class="radar-line"></div>
+
+</div>
 <script>
 
-let origem=null, parada=null, destino=null, modo=null;
+/* SLIDER */
 
-const modal=document.getElementById("modal");
-const lista=document.getElementById("lista");
-const busca=document.getElementById("busca");
-const confirmarBtn=document.getElementById("confirmar");
-const tipoCarroSelect=document.getElementById("tipoCarro");
+let slideIndex=0;
+const slides=document.getElementById("slides");
+const dots=document.querySelectorAll(".dotSlide");
+
+setInterval(()=>{
+slideIndex++;
+if(slideIndex>=5) slideIndex=0;
+
+slides.style.transform=`translateX(-${slideIndex*100}%)`;
+
+dots.forEach(d=>d.classList.remove("ativo"));
+dots[slideIndex].classList.add("ativo");
+
+},4000);
+
+/* MENU */
 
 function abrirMenu(){
 document.getElementById("menu").classList.add("ativo");
@@ -350,6 +588,16 @@ function irPara(pagina){
 window.location.href=pagina;
 }
 
+/* SISTEMA ORIGINAL */
+
+let origem=null, parada=null, destino=null, modo=null;
+
+const modal=document.getElementById("modal");
+const lista=document.getElementById("lista");
+const busca=document.getElementById("busca");
+const confirmarBtn=document.getElementById("confirmar");
+const tipoCarroSelect=document.getElementById("tipoCarro");
+
 async function init(){
 await DataManager.carregar();
 }
@@ -363,19 +611,22 @@ return;
 }
 
 modo=tipo;
-
 busca.value="";
-
 modal.style.display="flex";
 
 let dados=[];
 
 if(tipo==="origem") dados=DataManager.listarOrigens();
 
-if(tipo==="parada") dados=DataManager.listarDestinos(origem).filter(p=>DataManager.listarDestinos(p).length>0);
+if(tipo==="parada"){
+dados=DataManager.listarDestinos(origem)
+.filter(p=>DataManager.listarDestinos(p).length>0);
+}
 
 if(tipo==="destino"){
-dados=parada?DataManager.listarDestinos(parada):DataManager.listarDestinos(origem);
+dados=parada
+?DataManager.listarDestinos(parada)
+:DataManager.listarDestinos(origem);
 }
 
 renderLista(dados);
@@ -389,15 +640,11 @@ lista.innerHTML="";
 arr.forEach(item=>{
 
 const div=document.createElement("div");
-
 div.innerText=item;
 
 div.onclick=()=>{
-
 selecionar(item);
-
 modal.style.display="none";
-
 };
 
 lista.appendChild(div);
@@ -412,28 +659,55 @@ const termo=busca.value.toLowerCase();
 
 Array.from(lista.children).forEach(div=>{
 
-div.style.display=div.innerText.toLowerCase().includes(termo)?"block":"none";
+div.style.display=div.innerText.toLowerCase().includes(termo)
+? "block"
+: "none";
 
 });
 
 });
+
+/* SELECT PREMIUM TIPO CARRO */
+
+const tipoCarroBtn = document.getElementById("tipoCarroBtn");
+const modalTipoCarro = document.getElementById("modalTipoCarro");
+const tipoCarroTexto = document.getElementById("tipoCarroTexto");
+const tipoCarroInput = document.getElementById("tipoCarro");
+
+tipoCarroBtn.onclick = () => {
+modalTipoCarro.style.display = "flex";
+};
+
+document.querySelectorAll("#modalTipoCarro .rf-option").forEach(opcao=>{
+opcao.onclick = () => {
+
+const valor = opcao.dataset.value;
+
+tipoCarroInput.value = valor;
+tipoCarroTexto.innerText = opcao.innerText;
+
+modalTipoCarro.style.display = "none";
+
+};
+});
+
+modalTipoCarro.onclick = (e)=>{
+if(e.target === modalTipoCarro){
+modalTipoCarro.style.display="none";
+}
+};
 
 function selecionar(valor){
 
 if(modo==="origem"){
 
 origem=valor;
-
 parada=null;
-
 destino=null;
 
 origemTexto.innerText=valor;
-
 paradaTexto.innerText="Selecionar parada";
-
 destinoTexto.innerText="Selecionar destino";
-
 paradaBtn.style.display="none";
 
 }
@@ -441,9 +715,7 @@ paradaBtn.style.display="none";
 if(modo==="parada"){
 
 parada=valor;
-
 destino=null;
-
 paradaTexto.innerText=valor;
 
 }
@@ -451,7 +723,6 @@ paradaTexto.innerText=valor;
 if(modo==="destino"){
 
 destino=valor;
-
 destinoTexto.innerText=valor;
 
 }
@@ -492,7 +763,6 @@ valorTotal=DataManager.buscarValor(origem,destino)||0;
 }else{
 
 const p1=DataManager.buscarValor(origem,parada)||0;
-
 const p2=DataManager.buscarValor(parada,destino)||0;
 
 valorTotal=p1+p2;
@@ -514,14 +784,6 @@ categoria:tipoCarro
 window.location.href="resumo.html";
 
 };
-
-(function(){
-
-const temaSalvo=localStorage.getItem("rf_theme")||"dark";
-
-document.body.setAttribute("data-theme",temaSalvo);
-
-})();
 
 </script>
 
