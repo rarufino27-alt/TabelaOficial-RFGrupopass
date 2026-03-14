@@ -500,9 +500,9 @@ const agora = new Date();
 const data = agora.toLocaleDateString("pt-BR");
 const hora = agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 
-const total = parseFloat(localStorage.getItem("rf_total_final")) || 0;
-
 const pagamento = document.getElementById("pagamento").value;
+
+const total = parseFloat(localStorage.getItem("rf_total_final")) || 0;
 
 let categoriaTexto = "Carro de 4 Lugares";
 
@@ -513,50 +513,95 @@ categoriaTexto = "Carro de 6 Lugares";
 let base = parseFloat(valor) || 0;
 let taxas = 0;
 
+let detalhes = `Valor Base: R$ ${base.toFixed(2)}\n`;
+
+/* NOTURNO */
+
+const noturno = adicionalNoturno(base);
+
+if(noturno > 0){
+detalhes += `Adicional Noturno: R$ ${noturno.toFixed(2)}\n`;
+base += noturno;
+}
+
+/* SAÍDA PRAIA */
+
 const saidaPraia = parseFloat(document.getElementById("saidaPraia").value)||0;
+
+if(saidaPraia > 0){
+detalhes += `Saída de Praia: R$ ${saidaPraia.toFixed(2)}\n`;
 taxas += saidaPraia;
+}
+
+/* FEIRA */
 
 const feira = parseFloat(document.getElementById("feira").value)||0;
+
+if(feira > 0){
+detalhes += `Taxa de Feira: R$ ${feira.toFixed(2)}\n`;
 taxas += feira;
+}
+
+/* ANIMAL */
 
 const animal = parseFloat(document.getElementById("animal").value)||0;
+
+if(animal > 0){
+detalhes += `Transporte Animal: R$ ${animal.toFixed(2)}\n`;
 taxas += animal;
+}
+
+/* ESPERA */
 
 const espera = parseFloat(document.getElementById("espera").value)||0;
 
 if(espera > 5){
-taxas += 3 + ((espera-5)*0.60);
+
+const taxaEspera = 3 + ((espera-5)*0.60);
+
+detalhes += `Tempo de Espera: R$ ${taxaEspera.toFixed(2)}\n`;
+
+taxas += taxaEspera;
+
 }
 
-const noturno = adicionalNoturno(base);
-base += noturno;
+/* SUBTOTAL */
 
 let subtotal = base + taxas;
 
+/* CATEGORIA */
+
 if(categoria > 1){
+
+const acrescimo = subtotal * (categoria-1);
+
+detalhes += `Acréscimo 6 Lugares: R$ ${acrescimo.toFixed(2)}\n`;
+
 subtotal = subtotal * categoria;
+
 }
 
-let taxaCartao = 0;
-let blocoPagamento = "";
+/* FORMA PAGAMENTO */
+
+let pagamentoTexto = "";
+
+if(pagamento === "dinheiro"){
+pagamentoTexto = "Dinheiro";
+}
+
+if(pagamento === "pix"){
+pagamentoTexto = "Pix";
+}
 
 if(pagamento === "debito"){
-taxaCartao = total - subtotal;
-
-blocoPagamento = `
-Acréscimo cartão: R$ ${taxaCartao.toFixed(2)}
-Forma de pagamento: Débito
-`;
+pagamentoTexto = "Cartão Débito";
 }
 
 if(pagamento === "credito"){
-taxaCartao = total - subtotal;
-
-blocoPagamento = `
-Acréscimo cartão: R$ ${taxaCartao.toFixed(2)}
-Forma de pagamento: Crédito
-`;
+pagamentoTexto = "Cartão Crédito";
 }
+
+/* ITINERÁRIO */
 
 let itinerario = `📍 Origem:
 ${origem}
@@ -573,16 +618,24 @@ ${parada}
 itinerario += `🏁 Destino:
 ${destino}`;
 
+/* MENSAGEM */
+
 const msg =
 `*Alguém Disponível?*
-  ${categoriaTexto}
+${categoriaTexto}
 
 ${itinerario}
 
-R$ ${taxaCartao.toFixed(2)}
+____________________
+*Detalhamento*
+
+${detalhes}
+
+Forma de Pagamento: ${pagamentoTexto}
 
 *Preço da Tabela: R$ ${total.toFixed(2)}*
-_____________________________
+
+____________________
 ${data}
 ${hora}
 
