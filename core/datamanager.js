@@ -1,156 +1,220 @@
 const DataManager = {
 
-  rotas: [],
+rotas: [],
 
-  CACHE_KEY: "rf_rotas_cache",
-  CACHE_TIME_KEY: "rf_rotas_cache_time",
+CACHE_KEY: "rf_rotas_cache",
+CACHE_TIME_KEY: "rf_rotas_cache_time",
 
-  CACHE_VALIDITY: 24 * 60 * 60 * 1000, // 24h
+CACHE_VALIDITY: 24 * 60 * 60 * 1000,
 
-  arquivos: [
+arquivos: [
 
-    "./data/condominio-porto-do-cabo.json",
-    "./data/gaibu.json",
-    "./data/shopping-costinha.json",
-    "./data/enseadas.json",
-    "./data/setor-4.json",
-    "./data/xareu.json",
-    "./data/itapuama.json",
-    "./data/calhetas.json",
-    "./data/lote-garapu2-lote-dona-amara.json",
-    "./data/cohab.json",
-    "./data/centro-do-cabo.json",
-    "./data/aguia-american-club-br-101.json",
-    "./data/empresas.json",
-    "./data/engenhos.json",
-    "./data/interurbanas.json",
-    "./data/interestaduais.json",
-    "./data/lazer-festa.json",
-    "./data/locais.json",
-    "./data/longas-locais.json",
-    "./data/praias.json",
-    "./data/bairro-baixo.json"
+"./data/condominio-porto-do-cabo.json",
+"./data/gaibu.json",
+"./data/shopping-costinha.json",
+"./data/enseadas.json",
+"./data/setor-4.json",
+"./data/xareu.json",
+"./data/itapuama.json",
+"./data/calhetas.json",
+"./data/lote-garapu2-lote-dona-amara.json",
+"./data/cohab.json",
+"./data/centro-do-cabo.json",
+"./data/aguia-american-club-br-101.json",
+"./data/empresas.json",
+"./data/engenhos.json",
+"./data/interurbanas.json",
+"./data/interestaduais.json",
+"./data/lazer-festa.json",
+"./data/locais.json",
+"./data/longas-locais.json",
+"./data/praias.json",
+"./data/bairro-baixo.json"
 
-  ],
+],
 
-  async carregar() {
+async carregar(){
 
-    try {
+try{
 
-      const cache = localStorage.getItem(this.CACHE_KEY);
-      const cacheTime = localStorage.getItem(this.CACHE_TIME_KEY);
+const cache = localStorage.getItem(this.CACHE_KEY);
+const cacheTime = localStorage.getItem(this.CACHE_TIME_KEY);
 
-      const agora = Date.now();
+const agora = Date.now();
 
-      if (cache && cacheTime && (agora - cacheTime) < this.CACHE_VALIDITY) {
+if(cache && cacheTime && (agora - cacheTime) < this.CACHE_VALIDITY){
 
-        this.rotas = JSON.parse(cache);
+this.rotas = JSON.parse(cache);
 
-        console.log("⚡ Rotas carregadas do CACHE:", this.rotas.length);
+console.log("⚡ Rotas carregadas do CACHE:", this.rotas.length);
 
-        return;
+return;
 
-      }
+}
 
-      console.log("⬇ Baixando rotas do servidor...");
+console.log("⬇ Carregando arquivos de rotas...");
 
-      const respostas = await Promise.all(
+const respostas = await Promise.allSettled(
 
-        this.arquivos.map(a =>
-          fetch(a).then(r => {
-            if (!r.ok) throw new Error("Falha ao carregar " + a);
-            return r.json();
-          })
-        )
+this.arquivos.map(a => this.carregarJSON(a))
 
-      );
+);
 
-      this.rotas = respostas.flat();
+let rotasTemp = [];
 
-      localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.rotas));
-      localStorage.setItem(this.CACHE_TIME_KEY, Date.now());
+respostas.forEach((res, i)=>{
 
-      console.log("✅ Rotas carregadas e salvas no cache:", this.rotas.length);
+if(res.status === "fulfilled"){
 
-    } catch (e) {
+rotasTemp = rotasTemp.concat(res.value);
 
-      console.error("❌ Erro ao carregar rotas:", e);
-      throw e;
+}else{
 
-    }
+console.warn("⚠ Falha ao carregar:", this.arquivos[i]);
 
-  },
+}
 
-  listarOrigens() {
+});
 
-    const locais = new Set();
+this.rotas = rotasTemp;
 
-    this.rotas.forEach(r => {
+localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.rotas));
+localStorage.setItem(this.CACHE_TIME_KEY, Date.now());
 
-      locais.add(r.origem);
-      locais.add(r.destino);
+console.log("✅ Rotas carregadas:", this.rotas.length);
 
-    });
+}catch(e){
 
-    return [...locais].sort();
+console.error("❌ Erro geral ao carregar rotas:", e);
 
-  },
+throw e;
 
-  listarDestinos(local) {
+}
 
-    const destinos = new Set();
+},
 
-    this.rotas.forEach(r => {
+async carregarJSON(caminho){
 
-      if (r.origem === local) {
-        destinos.add(r.destino);
-      }
+return new Promise((resolve,reject)=>{
 
-      if (r.destino === local) {
-        destinos.add(r.origem);
-      }
+const xhr = new XMLHttpRequest();
 
-    });
+xhr.open("GET", caminho, true);
 
-    return [...destinos].sort();
+xhr.onreadystatechange = function(){
 
-  },
+if(xhr.readyState === 4){
 
-  buscarValor(origem, destino) {
+if(xhr.status === 200 || xhr.status === 0){
 
-    let rota = this.rotas.find(
-      r => r.origem === origem && r.destino === destino
-    );
+try{
 
-    if (!rota) {
+const json = JSON.parse(xhr.responseText);
 
-      rota = this.rotas.find(
-        r => r.origem === destino && r.destino === origem
-      );
+resolve(json);
 
-    }
+}catch(e){
 
-    return rota ? Number(rota.valor) : null;
+reject("JSON inválido: " + caminho);
 
-  },
+}
 
-  calcularValorCompleto(origem, parada, destino) {
+}else{
 
-    if (!origem || !destino) return null;
+reject("Erro HTTP: " + caminho);
 
-    if (!parada) {
+}
 
-      return this.buscarValor(origem, destino);
+}
 
-    }
+};
 
-    const trecho1 = this.buscarValor(origem, parada);
-    const trecho2 = this.buscarValor(parada, destino);
+xhr.onerror = ()=> reject("Erro de rede: " + caminho);
 
-    if (trecho1 === null || trecho2 === null) return null;
+xhr.send();
 
-    return trecho1 + trecho2;
+});
 
-  }
+},
+
+listarOrigens(){
+
+const locais = new Set();
+
+this.rotas.forEach(r=>{
+
+locais.add(r.origem);
+locais.add(r.destino);
+
+});
+
+return [...locais].sort();
+
+},
+
+listarDestinos(local){
+
+const destinos = new Set();
+
+this.rotas.forEach(r=>{
+
+if(r.origem === local){
+
+destinos.add(r.destino);
+
+}
+
+if(r.destino === local){
+
+destinos.add(r.origem);
+
+}
+
+});
+
+return [...destinos].sort();
+
+},
+
+buscarValor(origem,destino){
+
+let rota = this.rotas.find(
+
+r => r.origem === origem && r.destino === destino
+
+);
+
+if(!rota){
+
+rota = this.rotas.find(
+
+r => r.origem === destino && r.destino === origem
+
+);
+
+}
+
+return rota ? Number(rota.valor) : null;
+
+},
+
+calcularValorCompleto(origem,parada,destino){
+
+if(!origem || !destino) return null;
+
+if(!parada){
+
+return this.buscarValor(origem,destino);
+
+}
+
+const trecho1 = this.buscarValor(origem,parada);
+const trecho2 = this.buscarValor(parada,destino);
+
+if(trecho1 === null || trecho2 === null) return null;
+
+return trecho1 + trecho2;
+
+}
 
 };
