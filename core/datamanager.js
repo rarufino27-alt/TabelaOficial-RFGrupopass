@@ -2,9 +2,16 @@ const DataManager = {
 
   rotas: [],
 
+  CACHE_KEY: "rf_rotas_cache",
+  CACHE_TIME_KEY: "rf_rotas_cache_time",
+
+  CACHE_VALIDITY: 24 * 60 * 60 * 1000, // 24h
+
   arquivos: [
+
     "./data/condominio-porto-do-cabo.json",
     "./data/gaibu.json",
+    "./data/shopping-costinha.json",
     "./data/enseadas.json",
     "./data/setor-4.json",
     "./data/xareu.json",
@@ -13,7 +20,6 @@ const DataManager = {
     "./data/lote-garapu2-lote-dona-amara.json",
     "./data/cohab.json",
     "./data/centro-do-cabo.json",
-    "./data/shopping-costa-dourada.json",
     "./data/aguia-american-club-br-101.json",
     "./data/empresas.json",
     "./data/engenhos.json",
@@ -23,31 +29,56 @@ const DataManager = {
     "./data/locais.json",
     "./data/longas-locais.json",
     "./data/praias.json",
-    "./data/bairro-sao-francisco-baixo.json"
+    "./data/bairro-baixo.json"
+
   ],
 
   async carregar() {
+
     try {
 
+      const cache = localStorage.getItem(this.CACHE_KEY);
+      const cacheTime = localStorage.getItem(this.CACHE_TIME_KEY);
+
+      const agora = Date.now();
+
+      if (cache && cacheTime && (agora - cacheTime) < this.CACHE_VALIDITY) {
+
+        this.rotas = JSON.parse(cache);
+
+        console.log("⚡ Rotas carregadas do CACHE:", this.rotas.length);
+
+        return;
+
+      }
+
+      console.log("⬇ Baixando rotas do servidor...");
+
       const respostas = await Promise.all(
+
         this.arquivos.map(a =>
           fetch(a).then(r => {
             if (!r.ok) throw new Error("Falha ao carregar " + a);
             return r.json();
           })
         )
+
       );
 
       this.rotas = respostas.flat();
 
-      console.log("✅ Rotas carregadas:", this.rotas.length);
+      localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.rotas));
+      localStorage.setItem(this.CACHE_TIME_KEY, Date.now());
+
+      console.log("✅ Rotas carregadas e salvas no cache:", this.rotas.length);
 
     } catch (e) {
 
-      console.error("❌ Erro ao carregar rotas", e);
+      console.error("❌ Erro ao carregar rotas:", e);
       throw e;
 
     }
+
   },
 
   listarOrigens() {
@@ -55,8 +86,10 @@ const DataManager = {
     const locais = new Set();
 
     this.rotas.forEach(r => {
+
       locais.add(r.origem);
       locais.add(r.destino);
+
     });
 
     return [...locais].sort();
@@ -90,9 +123,11 @@ const DataManager = {
     );
 
     if (!rota) {
+
       rota = this.rotas.find(
         r => r.origem === destino && r.destino === origem
       );
+
     }
 
     return rota ? Number(rota.valor) : null;
@@ -104,7 +139,9 @@ const DataManager = {
     if (!origem || !destino) return null;
 
     if (!parada) {
+
       return this.buscarValor(origem, destino);
+
     }
 
     const trecho1 = this.buscarValor(origem, parada);
