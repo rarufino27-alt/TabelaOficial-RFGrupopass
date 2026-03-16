@@ -422,16 +422,12 @@ detalhes += `Pagamento: ${pagamentoTexto}\n`;
 const msg =
 `${saudacao}!
 
-Alguém disponível?
+Alguém disponível ${origem.toUpperCase()} x ${destino.toUpperCase()}?
 
-${itinerario}
+${categoriaTexto}!
 
-${categoriaTexto}?
-
+Pagamento: ${pagamentoTexto}
 Tarifa tabelada: R$ ${total.toFixed(2)}
-
-Detalhamento:
-${detalhes}
 
 Grupo RF
 58.615.336/0001-49`;
