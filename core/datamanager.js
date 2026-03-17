@@ -1,100 +1,95 @@
 const DataManager = {
 
   rotas: [],
-  indice: {},
 
-  async carregar() {
+  arquivos: [
 
-    try {
+    "./dados/rotas/cohab.json",
+    "./dados/rotas/gaibu.json",
+    "./dados/rotas/engenhos.json",
+    "./dados/rotas/itapuama.json",
+    "./dados/rotas/calhetas.json",
+    "./dados/rotas/centro-do-cabo.json",
+    "./dados/rotas/bairro-baixo.json",
+    "./dados/rotas/xareu.json",
+    "./dados/rotas/interurbanas.json",
+    "./dados/rotas/setor-4.json"
 
-      console.log("⬇ Carregando rotas...");
+  ],
 
-      const resposta = await fetch("./data/rotas.json?nocache=" + Date.now());
+  async carregar(){
 
-      if(!resposta.ok){
-        throw new Error("Erro ao carregar rotas");
-      }
+    try{
 
-      this.rotas = await resposta.json();
+      const respostas = await Promise.all(
 
-      console.log("✅ Rotas carregadas:", this.rotas.length);
+        this.arquivos.map(a =>
+          fetch(a + "?v=" + Date.now())
+          .then(r => r.json())
+        )
 
-      this.criarIndice();
+      )
 
-    } catch(e){
+      this.rotas = respostas.flat()
 
-      console.error("Erro ao carregar rotas:", e);
+      this.criarIndice()
+
+      console.log("Rotas carregadas:", this.rotas.length)
+
+    }catch(e){
+
+      console.error("Erro ao carregar rotas:",e)
 
     }
 
   },
 
+  indice:{},
+
   criarIndice(){
 
-    this.indice = {};
+    this.indice = {}
 
-    this.rotas.forEach(r => {
+    this.rotas.forEach(r=>{
 
       if(!this.indice[r.origem]){
-        this.indice[r.origem] = {};
+        this.indice[r.origem]={}
       }
 
-      this.indice[r.origem][r.destino] = Number(r.valor);
-
-      // cria também rota inversa automaticamente
+      this.indice[r.origem][r.destino]=Number(r.valor)
 
       if(!this.indice[r.destino]){
-        this.indice[r.destino] = {};
+        this.indice[r.destino]={}
       }
 
-      this.indice[r.destino][r.origem] = Number(r.valor);
+      this.indice[r.destino][r.origem]=Number(r.valor)
 
-    });
+    })
 
   },
 
   listarOrigens(){
 
-    return Object.keys(this.indice).sort();
+    return Object.keys(this.indice).sort()
 
   },
 
   listarDestinos(origem){
 
-    if(!this.indice[origem]) return [];
+    if(!this.indice[origem]) return []
 
-    return Object.keys(this.indice[origem]).sort();
+    return Object.keys(this.indice[origem]).sort()
 
   },
 
   buscarValor(origem,destino){
 
-    if(
-      this.indice[origem] &&
-      this.indice[origem][destino]
-    ){
-      return this.indice[origem][destino];
+    if(this.indice[origem] && this.indice[origem][destino]){
+      return this.indice[origem][destino]
     }
 
-    return null;
-
-  },
-
-  calcularValorCompleto(origem,parada,destino){
-
-    if(!origem || !destino) return null;
-
-    if(!parada){
-      return this.buscarValor(origem,destino);
-    }
-
-    const trecho1 = this.buscarValor(origem,parada);
-    const trecho2 = this.buscarValor(parada,destino);
-
-    if(trecho1 === null || trecho2 === null) return null;
-
-    return trecho1 + trecho2;
+    return null
 
   }
 
-};
+}
