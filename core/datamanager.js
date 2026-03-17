@@ -4,16 +4,24 @@ const DataManager = {
 
   arquivos: [
 
-    "./dados/rotas/cohab.json",
-    "./dados/rotas/gaibu.json",
-    "./dados/rotas/engenhos.json",
-    "./dados/rotas/itapuama.json",
-    "./dados/rotas/calhetas.json",
-    "./dados/rotas/centro-do-cabo.json",
-    "./dados/rotas/bairro-baixo.json",
-    "./dados/rotas/xareu.json",
-    "./dados/rotas/interurbanas.json",
-    "./dados/rotas/setor-4.json"
+    "./data/Padaria-de-Gilberto-Cruzeiro.json",
+    "./data/aguia-american-club-br-101.json",
+    "./data/bairro-baixo.json",
+    "./data/bairro-alto.json",
+    "./data/calhetas.json",
+    "./data/centro-do-cabo.json",
+    "./data/cohab.json",
+    "./data/condominio-porto-do-cabo.json",
+    "./data/dharma-ville.json",
+    "./data/engenhos.json",
+    "./data/enseadas.json",
+    "./data/gaibu.json",
+    "./data/interurbanas.json",
+    "./data/itapuama.json",
+    "./data/lote-garapu2-lote-dona-amara.json",
+    "./data/setor-4.json",
+    "./data/shopping-costinha.json",
+    "./data/xareu.json"
 
   ],
 
@@ -25,7 +33,15 @@ const DataManager = {
 
         this.arquivos.map(a =>
           fetch(a + "?v=" + Date.now())
-          .then(r => r.json())
+          .then(r => {
+
+            if(!r.ok){
+              throw new Error("Falha ao carregar " + a)
+            }
+
+            return r.json()
+
+          })
         )
 
       )
@@ -38,7 +54,7 @@ const DataManager = {
 
     }catch(e){
 
-      console.error("Erro ao carregar rotas:",e)
+      console.error("Erro ao carregar rotas:", e)
 
     }
 
@@ -53,16 +69,16 @@ const DataManager = {
     this.rotas.forEach(r=>{
 
       if(!this.indice[r.origem]){
-        this.indice[r.origem]={}
+        this.indice[r.origem] = {}
       }
 
-      this.indice[r.origem][r.destino]=Number(r.valor)
+      this.indice[r.origem][r.destino] = Number(r.valor)
 
       if(!this.indice[r.destino]){
-        this.indice[r.destino]={}
+        this.indice[r.destino] = {}
       }
 
-      this.indice[r.destino][r.origem]=Number(r.valor)
+      this.indice[r.destino][r.origem] = Number(r.valor)
 
     })
 
