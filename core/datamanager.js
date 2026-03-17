@@ -1,220 +1,128 @@
 const DataManager = {
 
-rotas: [],
+  rotas: [],
 
-CACHE_KEY: "rf_rotas_cache",
-CACHE_TIME_KEY: "rf_rotas_cache_time",
+  arquivos: [
 
-CACHE_VALIDITY: 24 * 60 * 60 * 1000,
+    "./data/condominio-porto-do-cabo.json",
+    "./data/gaibu.json",
+    "./data/shopping-costinha.json",
+    "./data/enseadas.json",
+    "./data/setor-4.json",
+    "./data/xareu.json",
+    "./data/itapuama.json",
+    "./data/calhetas.json",
+    "./data/lote-garapu2-lote-dona-amara.json",
+    "./data/cohab.json",
+    "./data/centro-do-cabo.json",
+    "./data/aguia-american-club-br-101.json",
+    "./data/engenhos.json",
+    "./data/interurbanas.json",
+    "./data/bairro-baixo.json"
 
-arquivos: [
+  ],
 
-"./data/condominio-porto-do-cabo.json",
-"./data/gaibu.json",
-"./data/shopping-costinha.json",
-"./data/enseadas.json",
-"./data/setor-4.json",
-"./data/xareu.json",
-"./data/itapuama.json",
-"./data/calhetas.json",
-"./data/lote-garapu2-lote-dona-amara.json",
-"./data/cohab.json",
-"./data/centro-do-cabo.json",
-"./data/aguia-american-club-br-101.json",
-"./data/empresas.json",
-"./data/engenhos.json",
-"./data/interurbanas.json",
-"./data/interestaduais.json",
-"./data/lazer-festa.json",
-"./data/locais.json",
-"./data/longas-locais.json",
-"./data/praias.json",
-"./data/bairro-baixo.json"
+  async carregar() {
 
-],
+    try {
 
-async carregar(){
+      console.log("⬇ Carregando rotas do servidor...");
 
-try{
+      const respostas = await Promise.all(
 
-const cache = localStorage.getItem(this.CACHE_KEY);
-const cacheTime = localStorage.getItem(this.CACHE_TIME_KEY);
+        this.arquivos.map(a =>
+          fetch(a + "?v=" + Date.now(), { cache: "no-store" })
+          .then(r => {
+            if (!r.ok) throw new Error("Falha ao carregar " + a);
+            return r.json();
+          })
+        )
 
-const agora = Date.now();
+      );
 
-if(cache && cacheTime && (agora - cacheTime) < this.CACHE_VALIDITY){
+      this.rotas = respostas.flat();
 
-this.rotas = JSON.parse(cache);
+      console.log("✅ Rotas carregadas:", this.rotas.length);
 
-console.log("⚡ Rotas carregadas do CACHE:", this.rotas.length);
+    } catch (e) {
 
-return;
+      console.error("❌ Erro ao carregar rotas:", e);
+      throw e;
 
-}
+    }
 
-console.log("⬇ Carregando arquivos de rotas...");
+  },
 
-const respostas = await Promise.allSettled(
+  listarOrigens() {
 
-this.arquivos.map(a => this.carregarJSON(a))
+    const locais = new Set();
 
-);
+    this.rotas.forEach(r => {
 
-let rotasTemp = [];
+      locais.add(r.origem);
+      locais.add(r.destino);
 
-respostas.forEach((res, i)=>{
+    });
 
-if(res.status === "fulfilled"){
+    return [...locais].sort();
 
-rotasTemp = rotasTemp.concat(res.value);
+  },
 
-}else{
+  listarDestinos(local) {
 
-console.warn("⚠ Falha ao carregar:", this.arquivos[i]);
+    const destinos = new Set();
 
-}
+    this.rotas.forEach(r => {
 
-});
+      if (r.origem === local) {
+        destinos.add(r.destino);
+      }
 
-this.rotas = rotasTemp;
+      if (r.destino === local) {
+        destinos.add(r.origem);
+      }
 
-localStorage.setItem(this.CACHE_KEY, JSON.stringify(this.rotas));
-localStorage.setItem(this.CACHE_TIME_KEY, Date.now());
+    });
 
-console.log("✅ Rotas carregadas:", this.rotas.length);
+    return [...destinos].sort();
 
-}catch(e){
+  },
 
-console.error("❌ Erro geral ao carregar rotas:", e);
+  buscarValor(origem, destino) {
 
-throw e;
+    let rota = this.rotas.find(
+      r => r.origem === origem && r.destino === destino
+    );
 
-}
+    if (!rota) {
 
-},
+      rota = this.rotas.find(
+        r => r.origem === destino && r.destino === origem
+      );
 
-async carregarJSON(caminho){
+    }
 
-return new Promise((resolve,reject)=>{
+    return rota ? Number(rota.valor) : null;
 
-const xhr = new XMLHttpRequest();
+  },
 
-xhr.open("GET", caminho, true);
+  calcularValorCompleto(origem, parada, destino) {
 
-xhr.onreadystatechange = function(){
+    if (!origem || !destino) return null;
 
-if(xhr.readyState === 4){
+    if (!parada) {
 
-if(xhr.status === 200 || xhr.status === 0){
+      return this.buscarValor(origem, destino);
 
-try{
+    }
 
-const json = JSON.parse(xhr.responseText);
+    const trecho1 = this.buscarValor(origem, parada);
+    const trecho2 = this.buscarValor(parada, destino);
 
-resolve(json);
+    if (trecho1 === null || trecho2 === null) return null;
 
-}catch(e){
+    return trecho1 + trecho2;
 
-reject("JSON inválido: " + caminho);
-
-}
-
-}else{
-
-reject("Erro HTTP: " + caminho);
-
-}
-
-}
-
-};
-
-xhr.onerror = ()=> reject("Erro de rede: " + caminho);
-
-xhr.send();
-
-});
-
-},
-
-listarOrigens(){
-
-const locais = new Set();
-
-this.rotas.forEach(r=>{
-
-locais.add(r.origem);
-locais.add(r.destino);
-
-});
-
-return [...locais].sort();
-
-},
-
-listarDestinos(local){
-
-const destinos = new Set();
-
-this.rotas.forEach(r=>{
-
-if(r.origem === local){
-
-destinos.add(r.destino);
-
-}
-
-if(r.destino === local){
-
-destinos.add(r.origem);
-
-}
-
-});
-
-return [...destinos].sort();
-
-},
-
-buscarValor(origem,destino){
-
-let rota = this.rotas.find(
-
-r => r.origem === origem && r.destino === destino
-
-);
-
-if(!rota){
-
-rota = this.rotas.find(
-
-r => r.origem === destino && r.destino === origem
-
-);
-
-}
-
-return rota ? Number(rota.valor) : null;
-
-},
-
-calcularValorCompleto(origem,parada,destino){
-
-if(!origem || !destino) return null;
-
-if(!parada){
-
-return this.buscarValor(origem,destino);
-
-}
-
-const trecho1 = this.buscarValor(origem,parada);
-const trecho2 = this.buscarValor(parada,destino);
-
-if(trecho1 === null || trecho2 === null) return null;
-
-return trecho1 + trecho2;
-
-}
+  }
 
 };
