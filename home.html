@@ -1,252 +1,239 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <title>RF – Viagem</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<meta charset="UTF-8">
-<title>RF – Viagem</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="core/datamanager.js"></script>
 
-<script src="core/datamanager.js"></script>
-   
-<link rel="stylesheet" href="theme/premium.css">
-<link rel="stylesheet" href="theme/layout.css">
-<link rel="stylesheet" href="theme/components.css">
-<link rel="stylesheet" href="theme/theme.css">
-   
+  <!-- Mantenha seus CSS antigos se quiser fallback; o premium sobrescreve -->
+  <link rel="stylesheet" href="theme/theme.css">
+  <link rel="stylesheet" href="theme/layout.css">
+  <link rel="stylesheet" href="theme/components.css">
+  <link rel="stylesheet" href="theme/premium.css">
 </head>
-
 <body>
 
+<!-- LOADING -->
 <div id="loading" class="loading">
-<div class="loader"></div>
-<span>Carregando rotas...</span>
+  <div class="loader"></div>
+  <span>Carregando rotas...</span>
 </div>
 
 <!-- MENU -->
-
 <div class="menu-overlay" id="menuOverlay" onclick="fecharMenu()"></div>
-
 <div class="menu" id="menu">
-
-<h3>Menu</h3>
-
-<div class="menu-item" onclick="irPara('termos.html')">
-📜 Regras do Grupo RF
-</div>
-
-<div class="menu-item" onclick="irPara('configuracoes.html')">
-⚙️ Configurações
-</div>
-
+  <h3>Menu</h3>
+  <div class="menu-item" onclick="irPara('termos.html')">📜 Regras do Grupo RF</div>
+  <div class="menu-item" onclick="irPara('configuracoes.html')">⚙️ Configurações</div>
 </div>
 
 <!-- HEADER -->
-
 <div class="top-white">
-
-<div class="logo-area">
-<img src="icons/icon-512.png" class="logo-img">
-<span class="logo-text-dark">
-RF PASSAGEIRO
-</span>
+  <div class="logo-area">
+    <img src="icons/icon-512.png" class="logo-img" alt="RF">
+    <span class="logo-text-dark">RF PASSAGEIRO</span>
+  </div>
+  <div class="menu-btn-dark" onclick="abrirMenu()">☰</div>
 </div>
 
-<div class="menu-btn-dark" onclick="abrirMenu()">☰</div>
-
-</div>
-
-<!-- SLIDER -->
-
+<!-- SLIDER (oculto via CSS premium, mantido para não quebrar JS) -->
 <div class="slider">
-<div class="slides" id="slides">
-
-<div class="slide" style="background-image:url('slides/slide1.jpg')"></div>
-<div class="slide" style="background-image:url('slides/slide2.jpg')"></div>
-<div class="slide" style="background-image:url('slides/slide3.jpg')"></div>
-<div class="slide" style="background-image:url('slides/slide4.jpg')"></div>
-<div class="slide" style="background-image:url('slides/slide5.jpg')"></div>
-
+  <div class="slides" id="slides">
+    <div class="slide" style="background-image:url('slides/slide1.jpg')"></div>
+    <div class="slide" style="background-image:url('slides/slide2.jpg')"></div>
+    <div class="slide" style="background-image:url('slides/slide3.jpg')"></div>
+    <div class="slide" style="background-image:url('slides/slide4.jpg')"></div>
+    <div class="slide" style="background-image:url('slides/slide5.jpg')"></div>
+  </div>
 </div>
-</div>
-
 <div class="indicadores">
-<div class="dotSlide ativo"></div>
-<div class="dotSlide"></div>
-<div class="dotSlide"></div>
-<div class="dotSlide"></div>
-<div class="dotSlide"></div>
+  <div class="dotSlide ativo"></div>
+  <div class="dotSlide"></div>
+  <div class="dotSlide"></div>
+  <div class="dotSlide"></div>
+  <div class="dotSlide"></div>
 </div>
 
+<!-- LAYOUT DASHBOARD -->
 <div class="center">
 
-<div class="titulo-box">
-<div class="titulo-central">
-Para onde <span>vamos</span> hoje?
-</div>
+  <!-- TÍTULO -->
+  <div class="titulo-box">
+    <div class="titulo-central">Para onde <span>vamos</span> hoje?</div>
+  </div>
+
+  <!-- COLUNA ESQUERDA: FORMULÁRIO -->
+  <div class="card">
+
+    <div class="campo" id="origemBtn" data-label="Origem">
+      <div class="campo-left">
+        <div class="dot origem"></div>
+        <div id="origemTexto">Selecionar origem</div>
+      </div>
+    </div>
+
+    <div class="campo" id="paradaBtn" data-label="Parada" style="display:none;">
+      <div class="campo-left">
+        <div class="dot parada"></div>
+        <div id="paradaTexto">Selecionar parada</div>
+      </div>
+    </div>
+
+    <div class="campo" id="destinoBtn" data-label="Destino">
+      <div class="campo-left">
+        <div class="dot destino"></div>
+        <div id="destinoTexto">Selecionar destino</div>
+      </div>
+      <div class="plus" id="addParada" title="Adicionar parada">＋</div>
+    </div>
+
+    <div class="campo" data-label="Veículo">
+      <div class="campo-left">
+        <div class="dot" style="background:#3B82F6;box-shadow:0 0 12px rgba(59,130,246,.7)"></div>
+        <div>Tipo de veículo</div>
+      </div>
+      <div class="rf-select" id="tipoCarroBtn">
+        <span id="tipoCarroTexto">4 lugares</span>
+      </div>
+      <input type="hidden" id="tipoCarro" value="1">
+    </div>
+  </div>
+
+  <!-- COLUNA DIREITA: RESUMO -->
+  <aside class="summary-card">
+    <div class="summary-title">Resumo da viagem</div>
+
+    <div class="summary-route">
+      <div class="summary-row">
+        <div class="dot origem"></div>
+        <div>
+          <small>Origem</small>
+          <span id="resumoOrigem">—</span>
+        </div>
+      </div>
+      <div class="summary-row" id="resumoParadaRow" style="display:none">
+        <div class="dot parada"></div>
+        <div>
+          <small>Parada</small>
+          <span id="resumoParada">—</span>
+        </div>
+      </div>
+      <div class="summary-row">
+        <div class="dot destino"></div>
+        <div>
+          <small>Destino</small>
+          <span id="resumoDestino">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-meta">
+      <div class="meta-pill">
+        <div class="lbl">Veículo</div>
+        <div class="val" id="resumoVeiculo">4 lugares</div>
+      </div>
+      <div class="meta-pill">
+        <div class="lbl">Tempo est.</div>
+        <div class="val" id="resumoTempo">—</div>
+      </div>
+    </div>
+
+    <div class="price-block">
+      <div>
+        <div class="lbl">Total</div>
+      </div>
+      <div class="price-value" id="resumoPreco">R$ 0,00</div>
+    </div>
+
+    <div class="summary-actions">
+      <button class="btn-ghost" type="button" onclick="alert('Orçamento gerado a partir da rota selecionada.')">Orçamento</button>
+      <!-- Esse botão dispara o mesmo handler do confirmar original -->
+      <button class="btn-primary" id="confirmarTop" disabled onclick="document.getElementById('confirmar').click()">Confirmar viagem</button>
+    </div>
+  </aside>
 </div>
 
-<div class="card">
-
-<div class="campo" id="origemBtn">
-<div class="campo-left">
-<div class="dot origem"></div>
-<div id="origemTexto">Selecionar origem</div>
-</div>
-</div>
-
-<div class="campo" id="paradaBtn" style="display:none;">
-<div class="campo-left">
-<div class="dot parada"></div>
-<div id="paradaTexto">Selecionar parada</div>
-</div>
-</div>
-
-<div class="campo" id="destinoBtn">
-<div class="campo-left">
-<div class="dot destino"></div>
-<div id="destinoTexto">Selecionar destino</div>
-</div>
-<div class="plus" id="addParada">＋</div>
-</div>
-
-<div class="campo">
-
-<div class="campo-left">
-<div class="dot" style="background:#3b82f6;"></div>
-<div>Tipo de veículo</div>
-</div>
-
-<div class="rf-select" id="tipoCarroBtn">
-<span id="tipoCarroTexto">4 lugares</span>
-</div>
-
-<input type="hidden" id="tipoCarro" value="1">
-
-</div>
-
-</div>
-
-</div>
-
+<!-- BOTÃO ORIGINAL (mantido, escondido via CSS .bottom{display:none}) -->
 <div class="bottom">
-<button id="confirmar" disabled>Confirmar rota</button>
+  <button id="confirmar" disabled>Confirmar rota</button>
 </div>
 
+<!-- MODAL BUSCA -->
 <div class="modal" id="modal">
-<div class="modal-content">
-<input type="text" id="busca" placeholder="Buscar local...">
-<div class="lista" id="lista"></div>
-</div>
+  <div class="modal-content">
+    <input type="text" id="busca" placeholder="Buscar local...">
+    <div class="lista" id="lista"></div>
+  </div>
 </div>
 
+<!-- MODAL TIPO CARRO -->
 <div class="rf-modal" id="modalTipoCarro">
-
-<div class="rf-modal-content">
-
-<div class="rf-option" data-value="1">
-4 lugares
+  <div class="rf-modal-content">
+    <div class="rf-option" data-value="1">4 lugares</div>
+    <div class="rf-option" data-value="1.5">6 lugares (+50%)</div>
+  </div>
 </div>
 
-<div class="rf-option" data-value="1.5">
-6 lugares (+50%)
-</div>
-
-</div>
-
-</div>
-
+<!-- RADAR DECORATIVO -->
 <div class="radar-bg">
-<div class="radar-circle"></div>
-<div class="radar-circle"></div>
-<div class="radar-circle"></div>
-<div class="radar-circle"></div>
-<div class="radar-line"></div>
+  <div class="radar-circle"></div>
+  <div class="radar-circle"></div>
+  <div class="radar-circle"></div>
+  <div class="radar-circle"></div>
+  <div class="radar-line"></div>
 </div>
 
 <script>
-
 /* =========================
    INICIALIZAÇÃO SEGURA
 ========================= */
-
 async function init(){
-
-const loading = document.getElementById("loading");
-
-loading.style.display="flex";
-
-try{
-
-await DataManager.carregar();
-
-console.log("Rotas carregadas:", DataManager.rotas.length);
-
-}catch(e){
-
-alert("Erro ao carregar rotas. Reinicie o aplicativo.");
-
-console.error(e);
-
+  const loading = document.getElementById("loading");
+  loading.style.display="flex";
+  try{
+    await DataManager.carregar();
+    console.log("Rotas carregadas:", DataManager.rotas.length);
+  }catch(e){
+    alert("Erro ao carregar rotas. Reinicie o aplicativo.");
+    console.error(e);
+  }
+  loading.style.display="none";
 }
-
-loading.style.display="none";
-
-}
-
 init();
 
 /* =========================
-   SLIDER
+   SLIDER (mantido — o slider está oculto via CSS)
 ========================= */
-
 let slideIndex=0;
 const slides=document.getElementById("slides");
 const dots=document.querySelectorAll(".dotSlide");
-
 setInterval(()=>{
-
-slideIndex++;
-
-if(slideIndex>=5) slideIndex=0;
-
-slides.style.transform=`translateX(-${slideIndex*100}%)`;
-
-dots.forEach(d=>d.classList.remove("ativo"));
-
-dots[slideIndex].classList.add("ativo");
-
+  slideIndex++;
+  if(slideIndex>=5) slideIndex=0;
+  if(slides) slides.style.transform=`translateX(-${slideIndex*100}%)`;
+  dots.forEach(d=>d.classList.remove("ativo"));
+  if(dots[slideIndex]) dots[slideIndex].classList.add("ativo");
 },4000);
 
-/* =========================
-   MENU
-========================= */
-
+/* MENU */
 function abrirMenu(){
-
-document.getElementById("menu").classList.add("ativo");
-
-document.getElementById("menuOverlay").style.display="block";
-
+  document.getElementById("menu").classList.add("ativo");
+  document.getElementById("menuOverlay").style.display="block";
 }
-
 function fecharMenu(){
-
-document.getElementById("menu").classList.remove("ativo");
-
-document.getElementById("menuOverlay").style.display="none";
-
+  document.getElementById("menu").classList.remove("ativo");
+  document.getElementById("menuOverlay").style.display="none";
 }
-
-function irPara(p){
-
-window.location.href=p;
-
-}
+function irPara(p){ window.location.href=p; }
 
 /* =========================
-   SISTEMA
+   SISTEMA (intacto)
 ========================= */
-
 let origem=null;
 let parada=null;
 let destino=null;
@@ -256,251 +243,148 @@ const modal=document.getElementById("modal");
 const lista=document.getElementById("lista");
 const busca=document.getElementById("busca");
 const confirmarBtn=document.getElementById("confirmar");
-
-/* ABRIR MODAL */
+const confirmarTop=document.getElementById("confirmarTop");
 
 function abrirModal(tipo){
-
-if(tipo!=="origem" && !origem){
-
-alert("Selecione a origem primeiro.");
-
-return;
-
+  if(tipo!=="origem" && !origem){ alert("Selecione a origem primeiro."); return; }
+  modo=tipo;
+  busca.value="";
+  modal.style.display="flex";
+  let dados=[];
+  if(tipo==="origem") dados=DataManager.listarOrigens();
+  if(tipo==="parada"){
+    dados=DataManager.listarDestinos(origem)
+      .filter(p=>DataManager.listarDestinos(p).length>0);
+  }
+  if(tipo==="destino"){
+    dados=parada ? DataManager.listarDestinos(parada) : DataManager.listarDestinos(origem);
+  }
+  renderLista(dados);
 }
-
-modo=tipo;
-
-busca.value="";
-
-modal.style.display="flex";
-
-let dados=[];
-
-if(tipo==="origem") dados=DataManager.listarOrigens();
-
-if(tipo==="parada"){
-
-dados=DataManager.listarDestinos(origem)
-.filter(p=>DataManager.listarDestinos(p).length>0);
-
-}
-
-if(tipo==="destino"){
-
-dados=parada
-?DataManager.listarDestinos(parada)
-:DataManager.listarDestinos(origem);
-
-}
-
-renderLista(dados);
-
-}
-
-/* LISTA */
 
 function renderLista(arr){
-
-lista.innerHTML="";
-
-arr.forEach(item=>{
-
-const div=document.createElement("div");
-
-div.innerText=item;
-
-div.onclick=()=>{
-
-selecionar(item);
-
-modal.style.display="none";
-
-};
-
-lista.appendChild(div);
-
-});
-
+  lista.innerHTML="";
+  arr.forEach(item=>{
+    const div=document.createElement("div");
+    div.innerText=item;
+    div.onclick=()=>{ selecionar(item); modal.style.display="none"; };
+    lista.appendChild(div);
+  });
 }
 
-/* BUSCA */
-
 busca.addEventListener("input",()=>{
-
-const termo=busca.value.toLowerCase();
-
-Array.from(lista.children).forEach(div=>{
-
-div.style.display=div.innerText.toLowerCase().includes(termo)
-? "block"
-: "none";
-
-});
-
+  const termo=busca.value.toLowerCase();
+  Array.from(lista.children).forEach(div=>{
+    div.style.display=div.innerText.toLowerCase().includes(termo) ? "block" : "none";
+  });
 });
 
 /* TIPO CARRO */
-
 const tipoCarroBtn=document.getElementById("tipoCarroBtn");
 const modalTipoCarro=document.getElementById("modalTipoCarro");
 const tipoCarroTexto=document.getElementById("tipoCarroTexto");
 const tipoCarroInput=document.getElementById("tipoCarro");
 
-tipoCarroBtn.onclick=()=>{
-
-modalTipoCarro.style.display="flex";
-
-};
+tipoCarroBtn.onclick=()=>{ modalTipoCarro.style.display="flex"; };
 
 document.querySelectorAll("#modalTipoCarro .rf-option").forEach(opcao=>{
-
-opcao.onclick=()=>{
-
-const valor=opcao.dataset.value;
-
-tipoCarroInput.value=valor;
-
-tipoCarroTexto.innerText=opcao.innerText;
-
-modalTipoCarro.style.display="none";
-
-};
-
+  opcao.onclick=()=>{
+    const valor=opcao.dataset.value;
+    tipoCarroInput.value=valor;
+    tipoCarroTexto.innerText=opcao.innerText;
+    modalTipoCarro.style.display="none";
+    atualizarResumo();
+  };
 });
-
-modalTipoCarro.onclick=(e)=>{
-
-if(e.target===modalTipoCarro){
-
-modalTipoCarro.style.display="none";
-
-}
-
-};
+modalTipoCarro.onclick=(e)=>{ if(e.target===modalTipoCarro) modalTipoCarro.style.display="none"; };
 
 /* SELEÇÃO */
-
 function selecionar(valor){
+  if(modo==="origem"){
+    origem=valor; parada=null; destino=null;
+    origemTexto.innerText=valor;
+    paradaTexto.innerText="Selecionar parada";
+    destinoTexto.innerText="Selecionar destino";
+    paradaBtn.style.display="none";
+  }
+  if(modo==="parada"){ parada=valor; destino=null; paradaTexto.innerText=valor; }
+  if(modo==="destino"){ destino=valor; destinoTexto.innerText=valor; }
 
-if(modo==="origem"){
-
-origem=valor;
-
-parada=null;
-
-destino=null;
-
-origemTexto.innerText=valor;
-
-paradaTexto.innerText="Selecionar parada";
-
-destinoTexto.innerText="Selecionar destino";
-
-paradaBtn.style.display="none";
-
-}
-
-if(modo==="parada"){
-
-parada=valor;
-
-destino=null;
-
-paradaTexto.innerText=valor;
-
-}
-
-if(modo==="destino"){
-
-destino=valor;
-
-destinoTexto.innerText=valor;
-
-}
-
-confirmarBtn.disabled=!(origem && destino);
-
+  const ok=!!(origem && destino);
+  confirmarBtn.disabled=!ok;
+  confirmarTop.disabled=!ok;
+  atualizarResumo();
 }
 
 origemBtn.onclick=()=>abrirModal("origem");
-
 paradaBtn.onclick=()=>abrirModal("parada");
-
 destinoBtn.onclick=()=>abrirModal("destino");
 
 addParada.onclick=(e)=>{
-
-e.stopPropagation();
-
-if(!origem){
-
-alert("Selecione a origem primeiro.");
-
-return;
-
-}
-
-paradaBtn.style.display="flex";
-
+  e.stopPropagation();
+  if(!origem){ alert("Selecione a origem primeiro."); return; }
+  paradaBtn.style.display="flex";
 };
 
-modal.onclick=e=>{
+modal.onclick=e=>{ if(e.target===modal) modal.style.display="none"; };
 
-if(e.target===modal){
+/* =========================
+   RESUMO (apenas exibe — não recalcula)
+========================= */
+function fmtBRL(v){
+  return (v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+function atualizarResumo(){
+  document.getElementById("resumoOrigem").innerText  = origem  || "—";
+  document.getElementById("resumoDestino").innerText = destino || "—";
+  document.getElementById("resumoVeiculo").innerText = tipoCarroTexto.innerText;
 
-modal.style.display="none";
+  const linhaParada=document.getElementById("resumoParadaRow");
+  if(parada){
+    document.getElementById("resumoParada").innerText=parada;
+    linhaParada.style.display="flex";
+  }else{
+    linhaParada.style.display="none";
+  }
 
+  // Preço (usa lógica existente, não recalcula nada novo)
+  let total=0;
+  if(origem && destino && window.DataManager){
+    if(!parada){
+      total=DataManager.buscarValor(origem,destino)||0;
+    }else{
+      const p1=DataManager.buscarValor(origem,parada)||0;
+      const p2=DataManager.buscarValor(parada,destino)||0;
+      total=p1+p2;
+    }
+    total = total * parseFloat(tipoCarroInput.value || "1");
+  }
+  const el=document.getElementById("resumoPreco");
+  el.innerText=fmtBRL(total);
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
 }
 
-};
-
-/* CONFIRMAR */
-
+/* CONFIRMAR (intacto) */
 confirmarBtn.onclick=()=>{
-
-let valorTotal=0;
-
-if(!parada){
-
-valorTotal=DataManager.buscarValor(origem,destino)||0;
-
-}else{
-
-const p1=DataManager.buscarValor(origem,parada)||0;
-const p2=DataManager.buscarValor(parada,destino)||0;
-
-valorTotal=p1+p2;
-
-}
-
-const tipoCarro=parseFloat(tipoCarroInput.value);
-
-localStorage.setItem("rf_corrida_temp",JSON.stringify({
-
-origem,
-parada,
-destino,
-valor:valorTotal,
-categoria:tipoCarro
-
-}));
-
-window.location.href="resumo.html";
-
+  let valorTotal=0;
+  if(!parada){ valorTotal=DataManager.buscarValor(origem,destino)||0; }
+  else{
+    const p1=DataManager.buscarValor(origem,parada)||0;
+    const p2=DataManager.buscarValor(parada,destino)||0;
+    valorTotal=p1+p2;
+  }
+  const tipoCarro=parseFloat(tipoCarroInput.value);
+  localStorage.setItem("rf_corrida_temp",JSON.stringify({
+    origem, parada, destino, valor:valorTotal, categoria:tipoCarro
+  }));
+  window.location.href="resumo.html";
 };
 
 /* TEMA */
-
 (function(){
-
-const temaSalvo=localStorage.getItem("rf_theme")||"dark";
-
-document.body.setAttribute("data-theme",temaSalvo);
-
+  const temaSalvo=localStorage.getItem("rf_theme")||"dark";
+  document.body.setAttribute("data-theme",temaSalvo);
 })();
-
 </script>
-
 </body>
 </html>
