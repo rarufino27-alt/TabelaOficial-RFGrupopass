@@ -23,10 +23,10 @@
 
 { "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco PRAÇA", "valor": 9.99, "regiao": "Cabo" },
 { "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Alto dos Mirandas", "valor": 11.99, "regiao": "Cabo" },
-{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Caixa D'água", "valor": 11.99, "regiao": "Cabo" },
-{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua do Bicudo", "valor": 11.99, "regiao": "Cabo" },
-{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua 53", "valor": 11.99, "regiao": "Cabo" },
-{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua da Aurora", "valor": 11.99, "regiao": "Cabo" },
+{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Caixa D'água", "valor": 9.99, "regiao": "Cabo" },
+{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua do Bicudo", "valor": 9.99, "regiao": "Cabo" },
+{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua 53", "valor": 9.99, "regiao": "Cabo" },
+{ "origem": "Bairro São Francisco Alto", "destino": "Bairro São Francisco Rua da Aurora", "valor": 9.99, "regiao": "Cabo" },
 
 { "origem": "Bairro São Francisco Alto", "destino": "Bela Vista Alta", "valor": 14.99, "regiao": "Cabo" },
 { "origem": "Bairro São Francisco Alto", "destino": "Bela Vista Baixa", "valor": 12.99, "regiao": "Cabo" },
