@@ -574,13 +574,17 @@ function solicitar(){
   }
 
   const msg =
-`${saudacao}!
-Alguém disponível ${origem.toUpperCase()} x ${destino.toUpperCase()}?
+`*_${saudacao}!_*
+_Alguém disponível_
+
+*_${origem.toUpperCase()} x ${destino.toUpperCase()}?_*
+
 ${categoriaTexto}!
 Pagamento: ${pagamentoTexto}
 Tarifa tabelada: R$ ${total.toFixed(2)}
-Grupo RF
-58.615.336/0001-49`;
+
+*_Grupo RF_*
+_58.615.336/0001-49_`;
 
   const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
   window.location.href = url;
